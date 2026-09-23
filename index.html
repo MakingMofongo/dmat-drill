@@ -1,0 +1,740 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>body{margin:0}[hidden]{display:none!important}</style><title>dMAT Drill</title>
+<meta name="description" content="Timed practice for the dMAT General Academic Module, 26 Sep 2026">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  --paper:#eef0ea;--card:#ffffff;--ink:#1b2230;--muted:#5a6372;--line:#d4d8cd;
+  --accent:#0d6964;--accent-ink:#ffffff;--accent-soft:#d8ece9;
+  --ok:#1d7536;--ok-soft:#dcf0e1;--bad:#b3261e;--bad-soft:#f8e0dd;--warn:#9a5a00;
+  --grid-bg:#ffffff;--grid-line:#b9beb2;
+  --sans:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  color-scheme:dark;--paper:#11151b;--card:#1a2028;--ink:#e7eaef;--muted:#9ba4b3;--line:#2d3541;
+  --accent:#4cc0b8;--accent-ink:#0b1a19;--accent-soft:#16332f;--ok:#62c784;--ok-soft:#173222;
+  --bad:#f1766c;--bad-soft:#3a1c1a;--warn:#e0a24a;--grid-bg:#f4f5f1;--grid-line:#b9beb2;}}
+:root[data-theme="dark"]{
+  color-scheme:dark;--paper:#11151b;--card:#1a2028;--ink:#e7eaef;--muted:#9ba4b3;--line:#2d3541;
+  --accent:#4cc0b8;--accent-ink:#0b1a19;--accent-soft:#16332f;--ok:#62c784;--ok-soft:#173222;
+  --bad:#f1766c;--bad-soft:#3a1c1a;--warn:#e0a24a;--grid-bg:#f4f5f1;--grid-line:#b9beb2;}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--sans);padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:860px;margin:0 auto}
+header{padding-block:28px 12px;display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+h1{font-size:30px;line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 small{display:block;font-size:14px;font-weight:400;color:var(--muted);letter-spacing:0;margin-top:6px}
+.count{font-family:var(--mono);font-size:14px;color:var(--muted);text-align:right}
+.count b{display:block;font-size:22px;color:var(--ink)}
+nav{scrollbar-width:none;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);display:flex;gap:4px;overflow-x:auto;padding-block:8px;border-bottom:1px solid var(--line);margin-bottom:20px}
+nav button{font:inherit;font-size:15px;background:none;border:0;color:var(--muted);padding:8px 12px;border-radius:6px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+nav button:focus-visible,.btn:focus-visible,.opt:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h2{font-size:21px;margin:28px 0 8px;text-wrap:balance}
+h3{font-size:16px;margin:20px 0 6px}
+p,li{max-width:68ch}
+.muted{color:var(--muted)}
+.lab{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:14px;background:var(--card);color:var(--ink);border:0;padding:7px 12px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:700}
+.btn{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:700}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.clock{font-family:var(--mono);font-weight:700;font-size:18px;margin-left:auto;font-variant-numeric:tabular-nums}
+.clock.low{color:var(--bad)}
+.prog{font-family:var(--mono);font-size:14px;color:var(--muted)}
+.fb{margin-top:14px}
+.verdict{font-weight:700;padding:10px 12px;border-radius:8px;margin-bottom:8px}
+.verdict.ok{background:var(--ok-soft);color:var(--ok)}
+.verdict.bad{background:var(--bad-soft);color:var(--bad)}
+.why{margin:0 0 10px;padding-left:18px}
+.why li{margin:3px 0}
+.hist{margin-top:18px;font-size:14px;color:var(--muted)}
+.hist table{border-collapse:collapse;font-variant-numeric:tabular-nums}
+.hist td{padding:2px 14px 2px 0}
+/* figures */
+.fig-row{display:flex;flex-wrap:wrap;gap:10px}
+.fig-row figure{margin:0;text-align:center}
+.fig-row figcaption{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.mx{display:block;width:84px;height:84px;border-radius:4px}
+.fig-q{margin-top:16px}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.opt{font:inherit;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+.opt span{font-family:var(--mono);font-size:12px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+/* equations */
+.eqs{font-family:var(--mono);font-size:20px;line-height:1.9;margin:4px 0 14px;padding-left:4px}
+.ans{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.ans label{font-family:var(--mono);font-weight:700;font-size:18px;display:flex;gap:6px;align-items:center}
+.ans input{font:inherit;font-size:18px;width:64px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink)}
+/* latin */
+.lsq{display:grid;grid-template-columns:repeat(5,44px);gap:0;border:2px solid var(--ink);width:max-content;background:var(--card)}
+.lsq div{width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:20px;font-weight:700;border:1px solid var(--line)}
+.lsq .q{color:var(--bad);background:var(--bad-soft)}
+.lsq .fill{color:var(--accent)}
+.letters{display:flex;gap:8px;margin-top:14px}
+.letters .opt{width:48px;height:44px;justify-content:center;font-family:var(--mono);font-size:18px;font-weight:700}
+/* texts */
+.passage{max-width:68ch}
+.passage table{border-collapse:collapse;margin:8px 0;font-variant-numeric:tabular-nums}
+.passage td,.passage th{border:1px solid var(--line);padding:4px 10px;text-align:left}
+.formula{font-family:var(--mono);font-size:15px;background:var(--accent-soft);padding:8px 12px;border-radius:6px;display:inline-block;margin:4px 0}
+.qs{counter-reset:q;display:flex;flex-direction:column;gap:18px;margin-top:18px}
+.qb p{margin:0 0 6px;font-weight:700}
+.qb label{display:flex;gap:8px;align-items:flex-start;padding:5px 8px;border-radius:6px;cursor:pointer}
+.qb label.right{background:var(--ok-soft)}
+.qb label.wrong{background:var(--bad-soft)}
+.qb .expl{font-size:15px;color:var(--muted);margin:6px 0 0 8px}
+.tabs2{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+/* plan */
+.day{display:grid;grid-template-columns:118px 1fr;gap:6px 18px;padding-block:14px;border-top:1px solid var(--line)}
+.day:first-of-type{border-top:0}
+.day .when{font-weight:700}
+.day .when span{display:block;font-weight:400;color:var(--muted);font-size:14px}
+.day ul{margin:0;padding-left:18px}
+@media (max-width:560px){.day{grid-template-columns:1fr}}
+.tl{display:grid;grid-template-columns:64px 1fr;gap:8px 14px;font-variant-numeric:tabular-nums}
+.tl b{font-family:var(--mono);font-size:15px}
+.check label{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
+.check input{width:18px;height:18px;margin-top:3px;accent-color:var(--accent)}
+.kv{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;font-family:var(--mono);font-weight:700}
+.rule{border-left:3px solid var(--accent);padding-left:12px}
+.tag{font-family:var(--mono);font-size:12px;padding:2px 6px;border-radius:4px;background:var(--accent-soft)}
+nav::-webkit-scrollbar{display:none}
+@media (max-width:480px){.mx{width:70px;height:70px}.count{text-align:left}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head><body><div class="wrap">
+<header>
+  <h1>dMAT Drill<small>General Academic Module · English · Sat 26 Sep 2026 · Chennai</small></h1>
+  <div class="count"><b id="cd">--</b>until the 08:00 ID check</div>
+</header>
+
+<nav role="tablist">
+  <button role="tab" data-tab="plan" aria-selected="true">Plan</button>
+  <button role="tab" data-tab="fig" aria-selected="false">Figure sequences</button>
+  <button role="tab" data-tab="eq" aria-selected="false">Equations</button>
+  <button role="tab" data-tab="lat" aria-selected="false">Latin squares</button>
+  <button role="tab" data-tab="txt" aria-selected="false">Subject texts</button>
+  <button role="tab" data-tab="day" aria-selected="false">Exam day</button>
+</nav>
+
+<!-- PLAN -->
+<section id="plan">
+  <div class="panel">
+    <div class="lab">The test</div>
+    <div class="tl" style="margin-top:8px">
+      <b>25 min</b><span>Figure sequences: 20 series, predict matrices 5 and 6 (75 s each)</span>
+      <b>25 min</b><span>Mathematical equations: 20 systems, whole numbers 1–20 only (75 s each)</span>
+      <b>25 min</b><span>Latin squares: 20 grids, 5×5, letters A–E (75 s each)</span>
+      <b>30 min</b><span>Break</span>
+      <b>90 min</b><span>Subject module: texts from any field, 4 options per question, answer is in the text plus reasoning</span>
+    </div>
+    <p style="margin-bottom:0"><b>No notes at all</b>, so every drill here is done in your head. <b>No penalty for wrong answers</b>, so never leave one blank.</p>
+  </div>
+
+  <h2>Three days</h2>
+  <div class="panel">
+    <div class="day">
+      <div class="when">Thu 24<span>today · main session</span></div>
+      <ul>
+        <li>Sleep first. Then run one <b>timed set</b> of each core type back to back: Figures, Equations, Latin (75 min, like the exam).</li>
+        <li>Send the three scores on Telegram. That decides where the rest of the time goes.</li>
+        <li>After a short break, do two subject texts on a 20-minute timer each (Diagnostic tests, Circuits).</li>
+        <li>Review every miss, then 15 min of practice on your weakest type.</li>
+      </ul>
+    </div>
+    <div class="day">
+      <div class="when">Fri 25<span>travel · light</span></div>
+      <ul>
+        <li>Flight 6E-371 at 07:55; Comfort Park around 10:15.</li>
+        <li>Afternoon: one timed set of your weakest type, plus one text (Half-life or Elasticity). Stop by 18:00.</li>
+        <li>Evening: lay out passport, exam-day sheet and a label-free bottle. Sleep by 22:30. No cramming.</li>
+      </ul>
+    </div>
+    <div class="day">
+      <div class="when">Sat 26<span>exam</span></div>
+      <ul>
+        <li>10-minute warm-up only: 3 Latin squares and 2 equations in practice mode. Then phone away.</li>
+        <li>Leave Comfort Park by 07:00. The <a href="#day" data-go="day">Exam day</a> tab has the full timeline and checklist.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>How to work each part</h2>
+  <div class="stack">
+    <div class="panel rule">
+      <h3 style="margin-top:0">Figure sequences</h3>
+      <ul>
+        <li><b>Track one figure at a time</b> and knock out options with it. One figure usually removes one or two of the three choices, so you rarely need them all.</li>
+        <li>Check in this order: <b>where</b> it moves (row or column bounce, diagonal bounce, clockwise or anticlockwise round the border, 1 or 2 steps), <b>how it turns</b> (90° right or left), then <b>colour</b> (alternating 2 or cycling 3).</li>
+        <li><b>x + 1 rule:</b> steps grow 1, 2, 3, 4… From matrix 4 to 5 it moves 4 steps, and from 5 to 6 it moves 5. Rotation can grow the same way.</li>
+        <li>At an edge a figure either bounces back or runs along the border. Figures never overlap and never leave the grid.</li>
+      </ul>
+    </div>
+    <div class="panel rule">
+      <h3 style="margin-top:0">Equations</h3>
+      <ul>
+        <li>Every letter is a <b>whole number from 1 to 20</b>. Use that bound: 5 × B = A means B is at most 4.</li>
+        <li>Find the equation that pins a letter directly. If none does, substitute every definition into the equation that uses all the letters (the long one), solve for the single letter left, then back-substitute.</li>
+        <li>Keep signs straight when you substitute into a minus: A − (11 + B) = A − 11 − B.</li>
+        <li>Check one equation before confirming. It costs 5 seconds.</li>
+      </ul>
+    </div>
+    <div class="panel rule">
+      <h3 style="margin-top:0">Latin squares</h3>
+      <ul>
+        <li>First, list the letters in the <b>?</b> cell's row and column together. If four different letters appear, the fifth is the answer, often in 10 seconds.</li>
+        <li>If not, look for a cell whose row and column together already hold four letters and fill it. Also look for a letter that fits only one cell of a row or column.</li>
+        <li>Fill only what gets you nearer the <b>?</b>. You never need the whole grid.</li>
+      </ul>
+    </div>
+    <div class="panel rule">
+      <h3 style="margin-top:0">Subject module (90 min)</h3>
+      <ul>
+        <li>At the start, count the texts and split the 90 minutes. With 4 texts that is about 20 minutes each, plus a buffer.</li>
+        <li>Skim the text for its structure, then answer from the text. The answer is always derivable from the text plus school maths and logic, not from outside facts.</li>
+        <li>Typical moves: scale a formula (a square root halves or doubles by √2), read a definition exactly, pick the one statement true <b>in all cases</b>, and spot a design that breaks the stated method.</li>
+        <li>Out of your field (physics, economics, social science) is normal. Everyone is out of field on most texts.</li>
+      </ul>
+    </div>
+    <div class="panel rule">
+      <h3 style="margin-top:0">Across the whole test</h3>
+      <ul>
+        <li>75 seconds per core item. If an item passes two minutes, guess and move on. A hard item scores the same as an easy one.</li>
+        <li>Answer every item before time runs out. A blank is a sure zero, and a guess gets 1 in 3 on figures and 1 in 4 on texts.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DRILLS -->
+<section id="fig" hidden><div class="runner" data-kind="fig"></div></section>
+<section id="eq" hidden><div class="runner" data-kind="eq"></div></section>
+<section id="lat" hidden><div class="runner" data-kind="lat"></div></section>
+
+<!-- TEXTS -->
+<section id="txt" hidden>
+  <div class="tabs2" id="ptabs"></div>
+  <div class="bar"><span class="prog" id="pinfo"></span><span class="clock" id="pclock"></span></div>
+  <div class="panel" id="pbody"></div>
+</section>
+
+<!-- EXAM DAY -->
+<section id="day" hidden>
+  <div class="panel">
+    <div class="lab">Your details</div>
+    <dl class="kv" style="margin:10px 0 0">
+      <dt>Participant no.</dt><dd style="font-family:var(--sans);font-weight:400">on your exam-day sheet</dd>
+      <dt>Exam ID</dt><dd style="font-family:var(--sans);font-weight:400">on your exam-day sheet</dd>
+      <dt>ID</dt><dd style="font-family:var(--sans);font-weight:400">the passport you registered with</dd>
+      <dt>Venue</dt><dd style="font-family:var(--sans);font-weight:700">S.A. Engineering College, Poonamallee–Avadi High Road, Thiruverkadu, Chennai 600077</dd>
+      <dt>Module</dt><dd style="font-family:var(--sans);font-weight:700">General Academic Module · English</dd>
+    </dl>
+  </div>
+
+  <h2>Saturday timeline</h2>
+  <div class="panel tl">
+    <b>06:15</b><span>Up. Tea or coffee at Comfort Park (served before 07:00). Eat something light.</span>
+    <b>06:55</b><span>Cab from Comfort Park, Porur, to S.A. Engineering College, Thiruverkadu. Allow 40 min.</span>
+    <b>07:40</b><span>At the gate. Find the room. Phone off and packed away, or handed to your mother.</span>
+    <b>08:00</b><span>ID check. Show your passport. Sign the consent form that releases your result to APS India.</span>
+    <b>09:00</b><span>Core module: Figures, Equations, Latin squares, 25 min each.</span>
+    <b>~10:20</b><span>30-minute break. Water, a snack if the centre allows it, no revision.</span>
+    <b>~10:50</b><span>Subject module, 90 min.</span>
+    <b>~12:30</b><span>Done. Back to Comfort Park (checkout 16:00), then ITC around 17:00.</span>
+  </div>
+  <p class="muted">Arriving even slightly late means no entry and no refund.</p>
+
+  <h2>Checklist</h2>
+  <div class="panel check" id="checklist">
+    <label><input type="checkbox" id="c1">Original passport, the ID you registered with (not Aadhaar)</label>
+    <label><input type="checkbox" id="c2">Participant no. and exam ID (on the exam-day sheet, and memorised)</label>
+    <label><input type="checkbox" id="c3">Water in a clear bottle with the label peeled off</label>
+    <label><input type="checkbox" id="c4">No smartwatch, calculator, smart ring or glasses on you; phone off and handed over</label>
+    <label><input type="checkbox" id="c5">A light layer for an air-conditioned room</label>
+    <label><input type="checkbox" id="c6">Cab booked for 06:55 the night before</label>
+    <label><input type="checkbox" id="c7">Consent form for APS India signed at check-in</label>
+  </div>
+  <p class="muted">No notepaper in the room, no notes on the questions, no food during the sessions.</p>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const mod=(a,n)=>((a%n)+n)%n;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------- countdown ---------- */
+const EXAM=new Date("2026-09-26T08:00:00+05:30").getTime();
+function tick(){const ms=EXAM-Date.now();const el=document.getElementById("cd");
+  if(ms<=0){el.textContent="today";return;}
+  const h=Math.floor(ms/36e5),d=Math.floor(h/24);el.textContent=(d?d+"d ":"")+(h%24)+"h "+Math.floor(ms%36e5/6e4)+"m";}
+tick();setInterval(tick,30000);
+
+/* ---------- tabs ---------- */
+const tabs=[...document.querySelectorAll("nav button")];
+function show(id){tabs.forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===id?"true":"false"));
+  document.querySelectorAll("section").forEach(s=>s.hidden=s.id!==id);LS.set("dmat.tab",id);window.scrollTo(0,0);}
+tabs.forEach(b=>b.addEventListener("click",()=>show(b.dataset.tab)));
+document.querySelectorAll("[data-go]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();show(a.dataset.go);}));
+const hashTab=(location.hash||"").slice(1);
+show(tabs.some(b=>b.dataset.tab===hashTab)?hashTab:LS.get("dmat.tab","plan"));
+
+/* ---------- checklist ---------- */
+document.querySelectorAll("#checklist input").forEach(i=>{i.checked=!!LS.get("dmat.chk."+i.id,false);i.addEventListener("change",()=>LS.set("dmat.chk."+i.id,i.checked));});
+
+/* =====================================================================
+   FIGURE SEQUENCES
+   ===================================================================== */
+const N=4;
+const BORDER=[[0,0],[0,1],[0,2],[0,3],[1,3],[2,3],[3,3],[3,2],[3,1],[3,0],[2,0],[1,0]];
+const COLORS={black:"#1d2330",pink:"#e0508f",yellow:"#f2c230",green:"#2e9e5b",orange:"#f07b22",white:"#ffffff",blue:"#3a6fd8"};
+const SHAPES={
+  tri:{rot:true,name:"triangle",d:"M0,-7 L6.5,5.5 L-6.5,5.5 Z"},
+  arrow:{rot:true,name:"arrow",d:"M0,-7.5 L6.5,-0.5 L2.2,-0.5 L2.2,7.5 L-2.2,7.5 L-2.2,-0.5 L-6.5,-0.5 Z"},
+  ell:{rot:true,name:"L-shape",d:"M-6.5,-7 L-2,-7 L-2,2.5 L6.5,2.5 L6.5,7 L-6.5,7 Z"},
+  half:{rot:true,name:"half-disc",d:"M-7,3 A7,7 0 0 1 7,3 Z"},
+  circle:{rot:false,name:"circle"},
+  square:{rot:false,name:"square",d:"M-5.5,-5.5 L5.5,-5.5 L5.5,5.5 L-5.5,5.5 Z"}
+};
+function pingpong(len,start,dir,t){let p=start,d=dir;for(let k=0;k<t;k++){if(p+d<0||p+d>=len)d=-d;p+=d;}return p;}
+const tri=t=>t*(t+1)/2;
+function motion(level){
+  const types=level==="low"?["b1","row","col","diag"]:level==="med"?["b1","b2","row","col","diag","cyc"]:["b2","binc","row","col","diag","cyc","binc"];
+  const ty=pick(types);
+  if(ty==="b1"||ty==="b2"||ty==="binc"){
+    const i0=ri(0,11),dir=pick([1,-1]),step=ty==="b1"?1:ty==="b2"?2:"inc";
+    return{pos:t=>BORDER[mod(i0+dir*(step==="inc"?tri(t):step*t),12)],
+      desc:"moves "+(dir>0?"clockwise":"anticlockwise")+" round the outer border, "+(step==="inc"?"1, 2, 3, 4 … fields (x + 1)":step===1?"1 field per step":"2 fields per step")};
+  }
+  if(ty==="row"||ty==="col"){
+    const fixed=ri(0,3),s=ri(0,3),d=pick([1,-1]);
+    return ty==="row"?{pos:t=>[fixed,pingpong(4,s,d,t)],desc:"moves "+(d>0?"right":"left")+" along row "+(fixed+1)+", 1 field per step, bouncing off the side"}
+                     :{pos:t=>[pingpong(4,s,d,t),fixed],desc:"moves "+(d>0?"down":"up")+" column "+(fixed+1)+", 1 field per step, bouncing off the edge"};
+  }
+  if(ty==="diag"){
+    for(let k=0;k<50;k++){
+      const dr=pick([1,-1]),dc=pick([1,-1]);let r=ri(0,3),c=ri(0,3);
+      while(r-dr>=0&&r-dr<N&&c-dc>=0&&c-dc<N){r-=dr;c-=dc;}
+      const line=[];while(r>=0&&r<N&&c>=0&&c<N){line.push([r,c]);r+=dr;c+=dc;}
+      if(line.length<3)continue;
+      const s=ri(0,line.length-2);
+      return{pos:t=>line[pingpong(line.length,s,1,t)],desc:"moves diagonally "+(dr<0?"up":"down")+" to the "+(dc>0?"right":"left")+" 1 field per step, then back along the same diagonal"};
+    }
+    return motion("low");
+  }
+  // cycle
+  const seqs=[[[0,-1,"left"],[-1,0,"up"],[0,1,"right"],[1,0,"down"]],[[0,1,"right"],[1,0,"down"],[0,-1,"left"],[-1,0,"up"]],[[1,0,"down"],[0,1,"right"],[-1,0,"up"],[0,-1,"left"]]];
+  const sq=pick(seqs),off=ri(0,3),mv=[0,1,2,3].map(i=>sq[(i+off)%4]);
+  for(let k=0;k<50;k++){
+    const r0=ri(0,3),c0=ri(0,3),cum=[[r0,c0]];let ok=true;
+    for(let i=0;i<3;i++){const [r,c]=cum[i],nr=r+mv[i][0],nc=c+mv[i][1];if(nr<0||nr>=N||nc<0||nc>=N){ok=false;break;}cum.push([nr,nc]);}
+    if(!ok)continue;
+    return{pos:t=>cum[t%4],desc:"moves 1 field per step in the repeating order "+mv.map(m=>m[2]).join(", ")};
+  }
+  return motion("low");
+}
+function rotation(level,sh){
+  if(!SHAPES[sh].rot)return{f:()=>0,desc:""};
+  const r0=ri(0,3);
+  const opts=level==="low"?["none","cw","ccw"]:level==="med"?["cw","ccw","none"]:["cw","ccw","inc"];
+  const k=pick(opts);
+  if(k==="none")return{f:()=>r0,desc:"does not turn"};
+  if(k==="cw")return{f:t=>mod(r0+t,4),desc:"turns 90° right each step"};
+  if(k==="ccw")return{f:t=>mod(r0-t,4),desc:"turns 90° left each step"};
+  return{f:t=>mod(r0+tri(t),4),desc:"turns right 1, 2, 3 … times 90° (x + 1)"};
+}
+function colouring(level){
+  const names=Object.keys(COLORS);
+  const n=level==="low"?pick([1,1,2]):level==="med"?pick([1,2,2]):pick([2,3]);
+  const cyc=shuffle(names.slice()).slice(0,n);
+  if(n===1)return{f:()=>cyc[0],desc:"",fixed:cyc[0]};
+  return{f:t=>cyc[t%n],desc:"colour "+(n===2?"alternates ":"cycles ")+cyc.join(" → ")};
+}
+function genFig(level){
+  for(let tries=0;tries<400;tries++){
+    const count=level==="low"?ri(1,2):level==="med"?ri(2,3):ri(3,4);
+    const shapes=shuffle(Object.keys(SHAPES)).slice(0,count);
+    const figs=shapes.map(sh=>({sh,m:motion(level),r:rotation(level,sh),c:colouring(level)}));
+    const state=t=>figs.map(f=>({sh:f.sh,p:f.m.pos(t),r:f.r.f(t),c:f.c.f(t)}));
+    const frames=[0,1,2,3,4,5].map(state);
+    if(frames.some(overlaps))continue;
+    const o5=options(frames,4,figs),o6=options(frames,5,figs);
+    if(!o5||!o6)continue;
+    const expl=figs.map(f=>{const bits=[f.m.desc,f.r.desc,f.c.desc].filter(Boolean);
+      return "<b>"+(f.c.fixed?f.c.fixed+" ":"")+SHAPES[f.sh].name+"</b> "+bits.join("; ");});
+    return makeFigItem(frames,o5,o6,expl);
+  }
+  throw new Error("figure generator exhausted");
+}
+function overlaps(st){const seen=new Set();for(const f of st){const k=f.p[0]+","+f.p[1];if(seen.has(k))return true;seen.add(k);}return false;}
+const skey=st=>st.map(f=>f.sh+f.p.join("")+f.r+f.c).sort().join("|");
+function options(frames,t,figs){
+  const correct=frames[t],ck=skey(correct),cands=[];
+  figs.forEach((f,i)=>{
+    const mut=fn=>{const s=correct.map(x=>({...x,p:x.p.slice()}));fn(s[i]);cands.push(s);};
+    mut(x=>{x.p=f.m.pos(t-1).slice();});
+    mut(x=>{x.p=f.m.pos(t+1).slice();});
+    if(SHAPES[f.sh].rot){mut(x=>{x.r=mod(x.r+1,4);});mut(x=>{x.r=mod(x.r-1,4);});mut(x=>{x.r=mod(x.r+2,4);});}
+    mut(x=>{const cs=Object.keys(COLORS).filter(c=>c!==x.c);x.c=pick(cs);});
+    mut(x=>{const [r,c]=x.p;const nb=[[r+1,c],[r-1,c],[r,c+1],[r,c-1]].filter(([a,b])=>a>=0&&a<N&&b>=0&&b<N);x.p=pick(nb);});
+  });
+  const seen=new Set([ck]),good=[];
+  for(const s of shuffle(cands)){if(overlaps(s))continue;const k=skey(s);if(seen.has(k))continue;seen.add(k);good.push(s);if(good.length===2)break;}
+  if(good.length<2)return null;
+  const all=shuffle([correct,...good]);
+  return{opts:all,ans:all.indexOf(correct)};
+}
+function svgMx(st){
+  let s='<svg class="mx" viewBox="0 0 84 84" aria-hidden="true"><rect x="0" y="0" width="84" height="84" fill="var(--grid-bg)"/>';
+  for(let i=0;i<=N;i++){const v=2+20*i;s+='<line x1="'+v+'" y1="2" x2="'+v+'" y2="82" stroke="var(--grid-line)" stroke-width="1"/><line x1="2" y1="'+v+'" x2="82" y2="'+v+'" stroke="var(--grid-line)" stroke-width="1"/>';}
+  for(const f of st){const cx=12+20*f.p[1],cy=12+20*f.p[0],fill=COLORS[f.c];
+    if(f.sh==="circle")s+='<circle cx="'+cx+'" cy="'+cy+'" r="6.5" fill="'+fill+'" stroke="#1d2330" stroke-width=".9"/>';
+    else s+='<path d="'+SHAPES[f.sh].d+'" transform="translate('+cx+' '+cy+') rotate('+f.r*90+')" fill="'+fill+'" stroke="#1d2330" stroke-width=".9"/>';}
+  return s+"</svg>";
+}
+function makeFigItem(frames,o5,o6,expl){
+  const given=()=> '<div class="fig-row">'+[0,1,2,3].map(t=>'<figure>'+svgMx(frames[t])+'<figcaption>'+(t+1)+'</figcaption></figure>').join("")+'</div>';
+  return{
+    render(stage,submit){
+      const optRow=(o,slot)=>'<div class="fig-q"><div class="lab">Image '+(slot+5)+'</div><div class="opts" data-slot="'+slot+'">'+o.opts.map((s,i)=>'<button class="opt" type="button" aria-pressed="false" data-i="'+i+'">'+svgMx(s)+'<span>Matrix '+(i+1)+'</span></button>').join("")+'</div></div>';
+      stage.innerHTML=given()+optRow(o5,0)+optRow(o6,1)+'<div style="margin-top:14px"><button class="btn primary confirm" type="button" disabled>Confirm</button></div>';
+      const sel=[null,null],btn=stage.querySelector(".confirm");
+      stage.querySelectorAll(".opts").forEach(row=>row.addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||btn.dataset.done)return;
+        const slot=+row.dataset.slot;sel[slot]=+b.dataset.i;row.querySelectorAll(".opt").forEach(x=>x.setAttribute("aria-pressed",x===b?"true":"false"));btn.disabled=sel.includes(null);}));
+      btn.addEventListener("click",()=>{btn.dataset.done="1";btn.disabled=true;submit(sel.slice());});
+    },
+    check:a=>!!a&&a[0]===o5.ans&&a[1]===o6.ans,
+    mark(stage,a){[o5,o6].forEach((o,slot)=>stage.querySelectorAll('.opts[data-slot="'+slot+'"] .opt').forEach((b,i)=>{if(i===o.ans)b.classList.add("right");else if(a&&a[slot]===i)b.classList.add("wrong");}));},
+    explain:()=>'<ul class="why">'+expl.map(e=>"<li>"+e+"</li>").join("")+"</ul><p class=\"muted\">Image 5 = Matrix "+(o5.ans+1)+", Image 6 = Matrix "+(o6.ans+1)+"</p>",
+    review:()=>given()+'<div class="fig-row" style="margin-top:8px"><figure>'+svgMx(o5.opts[o5.ans])+'<figcaption>5 (answer)</figcaption></figure><figure>'+svgMx(o6.opts[o6.ans])+'<figcaption>6 (answer)</figcaption></figure></div>'
+  };
+}
+
+/* =====================================================================
+   EQUATIONS
+   ===================================================================== */
+function rel(X,Y,x,level){
+  const kinds=shuffle(level==="low"?["add","sub","mul","div"]:["add","sub","mul","div","const","aff"]);
+  for(const k of kinds){
+    if(k==="add"){const c=ri(1,12),y=x+c;if(y>20)continue;const f=pick([X+" + "+c+" = "+Y,Y+" – "+c+" = "+X,c+" + "+X+" = "+Y]);return{y,t:f,fn:v=>v[X]+c===v[Y]};}
+    if(k==="sub"){const c=ri(1,10),y=x-c;if(y<1)continue;return{y,t:X+" – "+c+" = "+Y,fn:v=>v[X]-c===v[Y]};}
+    if(k==="mul"){const c=ri(2,6),y=c*x;if(y>20)continue;const f=pick([c+" × "+X+" = "+Y,Y+" ÷ "+c+" = "+X]);return{y,t:f,fn:v=>v[Y]===c*v[X]};}
+    if(k==="div"){const cs=[2,3,4,5].filter(c=>x%c===0&&x/c>=1);if(!cs.length)continue;const c=pick(cs),y=x/c;return{y,t:X+" ÷ "+c+" = "+Y,fn:v=>v[X]===c*v[Y]};}
+    if(k==="const"){const y=ri(1,20),c=x+y;if(c>25)continue;return{y,t:c+" – "+X+" = "+Y,fn:v=>c-v[X]===v[Y]};}
+    if(k==="aff"){const c=ri(2,4),m=ri(1,5),y=c*x-m;if(y<1||y>20)continue;return{y,t:c+" × "+X+" – "+m+" = "+Y,fn:v=>c*v[X]-m===v[Y]};}
+  }
+  return null;
+}
+function genEq(level){
+  const n=level==="low"?2:level==="med"?3:4;
+  const L=["A","B","C","D"].slice(0,n);
+  for(let tries=0;tries<800;tries++){
+    const order=shuffle(L.slice()),root=order[0],v={},eqs=[];
+    v[root]=ri(1,level==="high"?6:12);
+    let ok=true;
+    for(const Y of order.slice(1)){const X=Math.random()<.65?root:pick(Object.keys(v));const r=rel(X,Y,v[X],level);if(!r){ok=false;break;}v[Y]=r.y;eqs.push(r);}
+    if(!ok)continue;
+    let closing;
+    if(level!=="high"&&Math.random()<.25){
+      const c=ri(2,12);closing=pick([{t:c+" + "+root+" = "+(c+v[root]),fn:w=>c+w[root]===c+v[root]},{t:(c%5+2)+" × "+root+" = "+((c%5+2)*v[root]),fn:w=>(c%5+2)*w[root]===(c%5+2)*v[root]}]);
+      closing.direct=true;
+    }else{
+      const co=L.map(()=>level==="low"?pick([1,1,-1]):pick([1,-1]));
+      if(!co.some(c=>c>0))co[0]=1;
+      const s=L.reduce((a,l,i)=>a+co[i]*v[l],0);
+      if(s<1||s>40)continue;
+      const idx=L.map((_,i)=>i).sort((a,b)=>co[b]-co[a]);
+      const txt=idx.map((i,k)=>(k===0?"":co[i]>0?" + ":" – ")+L[i]).join("")+" = "+s;
+      closing={t:txt,fn:w=>L.reduce((a,l,i)=>a+co[i]*w[l],0)===s};
+    }
+    eqs.push(closing);
+    if(countSolutions(eqs,L)!==1)continue;
+    const shown=level==="low"?eqs.slice().reverse():shuffle(eqs.slice());
+    return makeEqItem(shown,L,v,root,!!closing.direct);
+  }
+  throw new Error("equation generator exhausted");
+}
+function countSolutions(eqs,L){
+  let n=0;const v={};
+  const rec=i=>{if(n>1)return;if(i===L.length){if(eqs.every(e=>e.fn(v)))n++;return;}for(let x=1;x<=20;x++){v[L[i]]=x;rec(i+1);}};
+  rec(0);return n;
+}
+function makeEqItem(eqs,L,v,root,direct){
+  const body='<div class="eqs">'+eqs.map(e=>esc(e.t)).join("<br>")+"</div>";
+  return{
+    render(stage,submit){
+      stage.innerHTML=body+'<form class="ans">'+L.map(l=>'<label>'+l+' =<input inputmode="numeric" autocomplete="off" data-l="'+l+'" id="eq-'+l+'"></label>').join("")+'<button class="btn primary" type="submit">Confirm</button></form>';
+      const form=stage.querySelector("form");const first=form.querySelector("input");if(first&&window.matchMedia("(pointer:fine)").matches)first.focus();
+      form.addEventListener("submit",e=>{e.preventDefault();if(form.dataset.done)return;form.dataset.done="1";const a={};form.querySelectorAll("input").forEach(i=>{a[i.dataset.l]=parseInt(i.value,10);i.disabled=true;});submit(a);});
+    },
+    check:a=>!!a&&L.every(l=>a[l]===v[l]),
+    mark(stage,a){stage.querySelectorAll(".ans input").forEach(i=>{i.style.borderColor=a&&a[i.dataset.l]===v[i.dataset.l]?"var(--ok)":"var(--bad)";});},
+    explain:()=>'<p><b>'+L.map(l=>l+" = "+v[l]).join(", ")+"</b></p><p class=\"muted\">"+(direct?"One equation pins "+root+" directly. Start there, then work along the chain.":"Write every letter in terms of "+root+", put them all into the equation that uses every letter, and solve it for "+root+". Then back-substitute.")+"</p>",
+    review:()=>body+'<p><b>'+L.map(l=>l+" = "+v[l]).join(", ")+"</b></p>"
+  };
+}
+
+/* =====================================================================
+   LATIN SQUARES
+   ===================================================================== */
+const LET="ABCDE";
+function latinFull(){const p=shuffle([0,1,2,3,4]),q=shuffle([0,1,2,3,4]),s=shuffle([0,1,2,3,4]);return p.map(pi=>q.map(qj=>s[(pi+qj)%5]));}
+function cands(g,i,j){const used=new Set();for(let k=0;k<5;k++){if(g[i][k]>=0)used.add(g[i][k]);if(g[k][j]>=0)used.add(g[k][j]);}return[0,1,2,3,4].filter(x=>!used.has(x));}
+function solvePath(g0,qr,qc){
+  const g=g0.map(r=>r.slice()),path=[];
+  for(let guard=0;guard<30;guard++){
+    if(g[qr][qc]>=0)return{path,g};
+    let done=false;
+    const qc1=cands(g,qr,qc);if(qc1.length===1){g[qr][qc]=qc1[0];return{path,g};}
+    for(let i=0;i<5&&!done;i++)for(let j=0;j<5&&!done;j++)if(g[i][j]<0){const c=cands(g,i,j);if(c.length===1){g[i][j]=c[0];path.push({i,j,L:c[0],why:"its row and column already hold the other four letters"});done=true;}}
+    if(!done){
+      outer:for(let L=0;L<5;L++){
+        for(let i=0;i<5;i++){if(g[i].includes(L))continue;const sp=[];for(let j=0;j<5;j++)if(g[i][j]<0&&cands(g,i,j).includes(L))sp.push(j);
+          if(sp.length===1){g[i][sp[0]]=L;path.push({i,j:sp[0],L,why:"it is the only cell in row "+(i+1)+" that can take "+LET[L]});done=true;break outer;}}
+        for(let j=0;j<5;j++){if(g.some(r=>r[j]===L))continue;const sp=[];for(let i=0;i<5;i++)if(g[i][j]<0&&cands(g,i,j).includes(L))sp.push(i);
+          if(sp.length===1){g[sp[0]][j]=L;path.push({i:sp[0],j,L,why:"it is the only cell in column "+(j+1)+" that can take "+LET[L]});done=true;break outer;}}
+      }
+    }
+    if(!done)return null;
+  }
+  return null;
+}
+function genLat(level){
+  const target=level==="low"?15:level==="med"?12:10;
+  for(let tries=0;tries<600;tries++){
+    const full=latinFull(),qr=ri(0,4),qc=ri(0,4),g=full.map(r=>r.slice());g[qr][qc]=-1;
+    const cells=shuffle([...Array(25).keys()].filter(k=>k!==qr*5+qc));
+    let givens=24;
+    for(const k of cells){if(givens<=target)break;const i=Math.floor(k/5),j=k%5,save=g[i][j];g[i][j]=-1;if(solvePath(g,qr,qc))givens--;else g[i][j]=save;}
+    const sol=solvePath(g,qr,qc);if(!sol)continue;
+    const st=sol.path.length;
+    if(level==="low"&&st!==0)continue;
+    if(level==="med"&&(st<1||st>3))continue;
+    if(level==="high"&&st<4)continue;
+    return makeLatItem(g,qr,qc,full[qr][qc],sol.path);
+  }
+  throw new Error("latin generator exhausted");
+}
+function makeLatItem(g,qr,qc,ans,path){
+  const grid=(filled)=>{const fill=new Map();if(filled)path.forEach(p=>fill.set(p.i*5+p.j,p.L));
+    let s='<div class="lsq">';for(let i=0;i<5;i++)for(let j=0;j<5;j++){
+      if(i===qr&&j===qc)s+='<div class="q">'+(filled?LET[ans]:"?")+"</div>";
+      else if(g[i][j]>=0)s+="<div>"+LET[g[i][j]]+"</div>";
+      else if(fill.has(i*5+j))s+='<div class="fill">'+LET[fill.get(i*5+j)]+"</div>";
+      else s+="<div></div>";}
+    return s+"</div>";};
+  const rowL=new Set(),colL=new Set();for(let k=0;k<5;k++){if(g[qr][k]>=0)rowL.add(LET[g[qr][k]]);if(g[k][qc]>=0)colL.add(LET[g[k][qc]]);}
+  return{
+    render(stage,submit){
+      stage.innerHTML='<div style="overflow-x:auto">'+grid(false)+'</div><div class="letters">'+[...LET].map((l,i)=>'<button class="opt" type="button" data-i="'+i+'">'+l+"</button>").join("")+"</div>";
+      const row=stage.querySelector(".letters");
+      row.addEventListener("click",e=>{const b=e.target.closest(".opt");if(!b||row.dataset.done)return;row.dataset.done="1";submit(+b.dataset.i);});
+    },
+    check:a=>a===ans,
+    mark(stage,a){stage.querySelectorAll(".letters .opt").forEach((b,i)=>{if(i===ans)b.classList.add("right");else if(i===a)b.classList.add("wrong");});},
+    explain:()=>{
+      let h='<p><b>Answer: '+LET[ans]+"</b></p>";
+      if(!path.length)h+='<p class="muted">Row has '+([...rowL].join(" ")||"nothing")+"; column has "+([...colL].join(" ")||"nothing")+". Together that is four letters, so the fifth goes in.</p>";
+      else h+='<ul class="why">'+path.map(p=>"<li>Row "+(p.i+1)+", column "+(p.j+1)+" = <b>"+LET[p.L]+"</b>, because "+p.why+".</li>").join("")+"<li>Now the ? has only <b>"+LET[ans]+"</b> left.</li></ul>";
+      return h+'<div style="overflow-x:auto;margin-top:8px">'+grid(true)+"</div>";
+    },
+    review:()=>'<div style="overflow-x:auto">'+grid(true)+"</div>"
+  };
+}
+
+/* =====================================================================
+   RUNNER (practice + timed set)
+   ===================================================================== */
+const GEN={fig:genFig,eq:genEq,lat:genLat};
+const NAMES={fig:"Figure sequences",eq:"Equations",lat:"Latin squares"};
+const SET_LEVELS=[..."llllllmmmmmmmmhhhhhh"].map(c=>c==="l"?"low":c==="m"?"med":"high");
+document.querySelectorAll(".runner").forEach(root=>{
+  const kind=root.dataset.kind,gen=GEN[kind];
+  root.innerHTML='<div class="bar"><div class="seg" role="group" aria-label="Difficulty"><button type="button" data-d="low">Easy</button><button type="button" data-d="med">Medium</button><button type="button" data-d="high">Hard</button></div>'+
+    '<button class="btn newb" type="button">New task</button><button class="btn primary timedb" type="button">Timed set · 20 in 25:00</button>'+
+    '<span class="prog"></span><span class="clock"></span></div><div class="panel stage"></div><div class="fb"></div><div class="hist"></div>';
+  const $=s=>root.querySelector(s),stage=$(".stage"),fb=$(".fb"),clock=$(".clock"),prog=$(".prog");
+  let level=LS.get("dmat.lvl."+kind,"med"),timed=null,timer=null;
+  const segs=[...root.querySelectorAll(".seg button")];
+  const setLvl=l=>{level=l;LS.set("dmat.lvl."+kind,l);segs.forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===l?"true":"false"));};
+  setLvl(level);
+  segs.forEach(b=>b.addEventListener("click",()=>{if(timed)return;setLvl(b.dataset.d);practice();}));
+  $(".newb").addEventListener("click",()=>{if(!timed)practice();});
+  $(".timedb").addEventListener("click",()=>{timed?finish(true):startTimed();});
+
+  function practice(){
+    fb.innerHTML="";prog.textContent="";clock.textContent="";
+    const item=gen(level);const t0=Date.now();
+    item.render(stage,a=>{
+      const ok=item.check(a),secs=Math.round((Date.now()-t0)/1000);item.mark(stage,a);
+      fb.innerHTML='<div class="verdict '+(ok?"ok":"bad")+'">'+(ok?"Correct":"Not this time")+" · "+secs+" s"+(secs>75?" (target 75 s)":"")+"</div>"+item.explain()+'<button class="btn primary nextb" type="button">Next task</button>';
+      const nb=fb.querySelector(".nextb");nb.addEventListener("click",practice);nb.focus({preventScroll:true});
+    });
+  }
+  function startTimed(){
+    const items=SET_LEVELS.map(l=>gen(l));
+    timed={items,answers:[],idx:0,end:Date.now()+25*60e3,start:Date.now()};
+    segs.forEach(b=>b.disabled=true);$(".newb").disabled=true;$(".timedb").textContent="Finish now";
+    timer=setInterval(upd,500);upd();next();
+  }
+  function upd(){const ms=Math.max(0,timed.end-Date.now());clock.textContent=Math.floor(ms/6e4)+":"+String(Math.floor(ms%6e4/1e3)).padStart(2,"0");clock.classList.toggle("low",ms<3*6e4);if(ms<=0)finish(false);}
+  function next(){
+    if(timed.idx>=timed.items.length){finish(false);return;}
+    const i=timed.idx;prog.textContent=(i+1)+" / 20";
+    timed.items[i].render(stage,a=>{timed.answers[i]=a;timed.idx++;next();});
+    fb.innerHTML='<button class="btn skipb" type="button">Skip (a guess is better)</button>';
+    fb.querySelector(".skipb").addEventListener("click",()=>{timed.answers[i]=null;timed.idx++;next();});
+  }
+  function finish(early){
+    if(!timed)return;clearInterval(timer);
+    const t=timed;timed=null;
+    const score=t.items.reduce((s,it,i)=>s+(it.check(t.answers[i])?1:0),0);
+    const used=Math.round((Date.now()-t.start)/1000),answered=t.answers.filter(a=>a!=null).length;
+    const h=LS.get("dmat.hist."+kind,[]);h.unshift({d:new Date().toISOString(),s:score,u:used,a:answered});LS.set("dmat.hist."+kind,h.slice(0,12));
+    segs.forEach(b=>b.disabled=false);$(".newb").disabled=false;$(".timedb").textContent="Timed set · 20 in 25:00";clock.textContent="";prog.textContent="";
+    const wrong=t.items.map((it,i)=>({it,i})).filter(x=>!x.it.check(t.answers[x.i]));
+    stage.innerHTML='<div class="lab">'+NAMES[kind]+' · timed set</div><p style="font-size:28px;font-weight:700;margin:6px 0">'+score+" / 20</p><p class=\"muted\">"+answered+" answered · "+Math.floor(used/60)+" min "+used%60+" s used"+(early?" · finished early":"")+"</p>"+(answered<20?"<p><b>"+(20-answered)+" left blank.</b> On the day, guess those in the last minute.</p>":"");
+    fb.innerHTML=wrong.length?'<h3>Review the '+wrong.length+" you missed</h3>"+wrong.map(x=>'<div class="panel" style="margin-bottom:10px"><div class="lab">Item '+(x.i+1)+" · "+SET_LEVELS[x.i]+"</div>"+x.it.review()+x.it.explain()+"</div>").join(""):"<p>Clean sheet.</p>";
+    hist();window.scrollTo(0,root.getBoundingClientRect().top+window.scrollY-60);
+  }
+  function hist(){
+    const h=LS.get("dmat.hist."+kind,[]);
+    $(".hist").innerHTML=h.length?'<div class="lab">Your timed sets on this device</div><table>'+h.map(r=>"<tr><td>"+new Date(r.d).toLocaleString("en-IN",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+"</td><td><b>"+r.s+" / 20</b></td><td>"+Math.round(r.u/60)+" min</td></tr>").join("")+"</table>":"";
+  }
+  hist();practice();
+});
+
+/* =====================================================================
+   SUBJECT TEXTS
+   ===================================================================== */
+const P=[
+{t:"Diagnostic tests",body:`<p>A screening test sorts people into "positive" and "negative". Two numbers describe its quality. <b>Sensitivity</b> is the share of people <i>with</i> the condition who test positive. <b>Specificity</b> is the share of people <i>without</i> the condition who test negative. Neither number depends on how common the condition is.</p>
+<p>What a patient wants to know is different: given a positive result, how likely is it that they have the condition? This is the <b>positive predictive value</b> (PPV), the share of all positive results that are true positives. Likewise the <b>negative predictive value</b> (NPV) is the share of all negative results that are true negatives. Both predictive values depend strongly on the <b>prevalence</b>, the share of the tested population that has the condition.</p>
+<p>A simple way to calculate them is to imagine a concrete number of people, for example 10,000, and fill a table:</p>
+<table><tr><th></th><th>Test positive</th><th>Test negative</th></tr><tr><td>Condition present</td><td>true positives</td><td>false negatives</td></tr><tr><td>Condition absent</td><td>false positives</td><td>true negatives</td></tr></table>
+<p>For all questions unless stated otherwise: 10,000 people are tested, prevalence is 1 %, sensitivity is 90 % and specificity is 95 %.</p>`,
+qs:[
+{q:"How many true positives are there?",o:["9","90","100","495"],a:1,w:"1 % of 10,000 = 100 people have the condition; 90 % of them test positive = 90."},
+{q:"How many false positives are there?",o:["50","90","495","990"],a:2,w:"9,900 people do not have it; 5 % of them (100 % − specificity) test positive = 495."},
+{q:"What is the positive predictive value, approximately?",o:["95 %","90 %","50 %","15 %"],a:3,w:"90 true positives out of 90 + 495 = 585 positives ≈ 15 %. Most positives are false because the condition is rare."},
+{q:"Prevalence rises to 10 %; sensitivity and specificity stay the same. What happens to the PPV?",o:["It stays the same, because the test itself has not changed.","It rises, because true positives grow while false positives shrink.","It falls, because more people are ill.","It rises to exactly 90 %, the sensitivity."],a:1,w:"1,000 ill → 900 true positives; 9,000 healthy → 450 false positives; PPV = 900 / 1,350 ≈ 67 %."},
+{q:"Which change, on its own, reduces the number of false positives among the same 10,000 people?",o:["Raising the sensitivity","Raising the specificity","Testing a second group of 10,000 people","Lowering the threshold so more results count as positive"],a:1,w:"False positives come from the healthy group, and specificity decides how many of them test negative."},
+{q:"What is the negative predictive value, approximately?",o:["99.9 %","95 %","90 %","15 %"],a:0,w:"True negatives 9,900 − 495 = 9,405; false negatives 100 − 90 = 10; NPV = 9,405 / 9,415 ≈ 99.9 %."}
+]},
+{t:"Electric circuits",body:`<p>In a simple circuit, voltage U (in volts, V), current I (in amperes, A) and resistance R (in ohms, Ω) are linked by <b>Ohm's law</b>:</p>
+<p><span class="formula">U = R · I</span></p>
+<p>Resistors can be combined in two ways. In a <b>series</b> connection the same current flows through every resistor, the voltages across the resistors add up to the source voltage, and the total resistance is the sum:</p>
+<p><span class="formula">R_total = R1 + R2 + …</span></p>
+<p>In a <b>parallel</b> connection every resistor has the full source voltage across it, the currents through the branches add up, and the total resistance follows from:</p>
+<p><span class="formula">1 / R_total = 1 / R1 + 1 / R2 + …</span></p>
+<p>The electrical power converted in a resistor is</p>
+<p><span class="formula">P = U · I = I² · R = U² / R</span></p>
+<p>A light bulb can be treated as a resistor whose brightness grows with the power converted in it. Its rated power is the power it takes at its rated voltage. Assume all resistances stay constant.</p>`,
+qs:[
+{q:"Resistors of 4 Ω and 6 Ω are connected in series to a 12 V source. What current flows?",o:["1.2 A","2 A","3 A","5 A"],a:0,w:"R_total = 10 Ω, I = 12 / 10 = 1.2 A."},
+{q:"In the same circuit, what is the voltage across the 6 Ω resistor?",o:["4.8 V","6 V","7.2 V","12 V"],a:2,w:"U = R · I = 6 · 1.2 = 7.2 V. The 4 Ω resistor takes the other 4.8 V."},
+{q:"Two 6 Ω resistors are connected in parallel. What is the total resistance?",o:["12 Ω","6 Ω","3 Ω","1/3 Ω"],a:2,w:"1/R = 1/6 + 1/6 = 1/3, so R = 3 Ω. Parallel resistance is always below the smallest branch."},
+{q:"A further resistor is added in parallel to a group already connected to a fixed voltage. Which statement is correct?",o:["Total resistance rises and total current falls.","Total resistance falls and total current rises.","Both stay the same because the voltage is fixed.","Total resistance falls and total current falls."],a:1,w:"Each extra branch adds another path; 1/R_total grows, so R_total falls and I = U / R_total rises."},
+{q:"A heater is rated 1,000 W at 230 V. It is run at 115 V. What power does it take?",o:["2,000 W","1,000 W","500 W","250 W"],a:3,w:"P = U² / R. Halving U quarters P: 1,000 / 4 = 250 W."},
+{q:"A 60 W bulb and a 100 W bulb (both rated at 230 V) are connected in series to 230 V. Which glows brighter?",o:["The 100 W bulb, because its rated power is higher.","The 60 W bulb, because it has the larger resistance and the same current flows through both.","Both equally, because the same current flows through both.","Neither lights, because the voltage is split."],a:1,w:"R = U² / P, so the 60 W bulb has the higher resistance. In series I is the same, and P = I² · R is larger where R is larger."}
+]},
+{t:"Half-life",body:`<p>Many quantities decrease so that the same <b>fraction</b> is lost in each equal time interval. The time in which the quantity halves is called the <b>half-life</b> T½. Radioactive substances behave like this, and so does the concentration of many drugs in the blood once the dose has been absorbed.</p>
+<p>If N₀ is the starting amount, the amount after time t is</p>
+<p><span class="formula">N(t) = N₀ · (1/2)^(t / T½)</span></p>
+<p>After one half-life, 1/2 remains; after two, 1/4; after three, 1/8, and so on. In medicine, a drug is often treated as practically eliminated after about five half-lives.</p>
+<p>Growth works the same way in reverse. For a quantity that grows by a fixed percentage per year, the <b>doubling time</b> can be estimated with the rule of 70:</p>
+<p><span class="formula">doubling time ≈ 70 / (growth rate in % per year)</span></p>
+<p>If the logarithm of the quantity is plotted against time, exponential processes appear as straight lines.</p>`,
+qs:[
+{q:"A drug has a half-life of 6 hours. A patient takes 400 mg. About how much remains after 24 hours?",o:["100 mg","50 mg","25 mg","12.5 mg"],a:2,w:"24 / 6 = 4 half-lives: 400 → 200 → 100 → 50 → 25 mg."},
+{q:"What fraction of the starting amount remains after three half-lives?",o:["1/3","1/6","1/8","1/9"],a:2,w:"(1/2)³ = 1/8."},
+{q:"A sample falls from 80 g to 5 g in 20 days. What is its half-life?",o:["4 days","5 days","10 days","16 days"],a:1,w:"80 → 5 is a factor of 16 = 2⁴, so 4 half-lives in 20 days: 5 days each."},
+{q:"An economy grows by 3.5 % per year. After about how many years has it doubled?",o:["7","20","35","70"],a:1,w:"70 / 3.5 = 20 years."},
+{q:"How does exponential decay appear when the logarithm of N is plotted against time?",o:["As a straight line falling with time","As a curve that flattens towards zero","As a straight line rising with time","As a horizontal line"],a:0,w:"The text says exponential processes are straight lines on a log plot; decay means the line falls."},
+{q:"The half-life of a substance were twice as long. For a fixed time t > 0, how does the remaining fraction change?",o:["It halves.","It doubles.","It becomes the square root of the previous fraction, so it is larger.","It does not change."],a:2,w:"(1/2)^(t/2T) = √((1/2)^(t/T)). The square root of a number between 0 and 1 is larger than the number."}
+]},
+{t:"Price elasticity of demand",body:`<p>When the price of a good rises, people usually buy less of it. How strongly they react is measured by the <b>price elasticity of demand</b>:</p>
+<p><span class="formula">E = (% change in quantity demanded) / (% change in price)</span></p>
+<p>Because quantity and price usually move in opposite directions, E is normally negative, and economists compare its absolute value |E|. Demand is <b>elastic</b> if |E| &gt; 1 (quantity reacts more than proportionally), <b>inelastic</b> if |E| &lt; 1, and <b>unit elastic</b> if |E| = 1.</p>
+<p>The seller's revenue is price times quantity, R = P · Q. With elastic demand a price increase lowers revenue, because the lost sales outweigh the higher price. With inelastic demand a price increase raises revenue. With unit-elastic demand a small price change leaves revenue roughly unchanged.</p>
+<p>Demand tends to be more elastic when close substitutes exist, when the good takes a large share of the budget, when it is not a necessity, and the longer the period over which buyers can adjust their behaviour.</p>`,
+qs:[
+{q:"A price rises by 10 % and the quantity sold falls by 5 %. How is demand classified?",o:["Elastic","Inelastic","Unit elastic","It cannot be said without the revenue"],a:1,w:"|E| = 5 / 10 = 0.5 < 1."},
+{q:"For that product, what happens to revenue after the 10 % price rise?",o:["It falls by about 5 %","It stays the same","It rises by about 4.5 %","It rises by 10 %"],a:2,w:"1.10 × 0.95 = 1.045, so revenue rises about 4.5 %."},
+{q:"Which good is likely to have the most elastic demand?",o:["Insulin for diabetics","Tap water","One particular brand of cola","Table salt"],a:2,w:"Many close substitutes (other colas) and no necessity make demand for one brand very elastic."},
+{q:"|E| = 2 and the price is cut by 5 %. Which statement is correct?",o:["Quantity rises by 10 % and revenue rises.","Quantity rises by 2.5 % and revenue falls.","Quantity rises by 10 % and revenue falls.","Quantity is unchanged."],a:0,w:"Quantity +10 %; revenue 0.95 × 1.10 = 1.045, so up about 4.5 %."},
+{q:"Why is demand for petrol more elastic over several years than over one week?",o:["Petrol prices change more over several years.","Over years people can change cars, jobs or commuting habits; in a week they cannot.","Petrol becomes a necessity only in the long run.","Revenue is measured differently over longer periods."],a:1,w:"The text names the adjustment period: the longer buyers can adjust, the more elastic the demand."},
+{q:"After a small price change a seller's revenue is unchanged. How was demand around that price?",o:["Perfectly inelastic","Inelastic","Unit elastic","Elastic"],a:2,w:"The text: with unit-elastic demand a small price change leaves revenue roughly unchanged."}
+]}
+];
+const ptabs=document.getElementById("ptabs"),pbody=document.getElementById("pbody"),pclock=document.getElementById("pclock"),pinfo=document.getElementById("pinfo");
+let ptimer=null;
+P.forEach((p,i)=>{const b=document.createElement("button");b.className="btn";b.type="button";b.textContent=p.t;b.addEventListener("click",()=>openP(i));ptabs.appendChild(b);});
+function openP(i){
+  const p=P[i];[...ptabs.children].forEach((b,k)=>b.classList.toggle("primary",k===i));
+  clearInterval(ptimer);const end=Date.now()+20*60e3;
+  const upd=()=>{const ms=Math.max(0,end-Date.now());pclock.textContent=Math.floor(ms/6e4)+":"+String(Math.floor(ms%6e4/1e3)).padStart(2,"0");pclock.classList.toggle("low",ms<3*6e4);if(ms<=0)clearInterval(ptimer);};
+  ptimer=setInterval(upd,500);upd();
+  pinfo.textContent=p.qs.length+" questions · 20 min";
+  pbody.innerHTML='<div class="passage"><h2 style="margin-top:0">'+p.t+"</h2>"+p.body+'</div><div class="qs">'+p.qs.map((q,k)=>'<div class="qb" data-k="'+k+'"><p>'+(k+1)+". "+q.q+"</p>"+q.o.map((o,j)=>'<label><input type="radio" name="p'+i+"q"+k+'" id="p'+i+"q"+k+"o"+j+'" value="'+j+'"><span>'+"abcd"[j]+") "+o+"</span></label>").join("")+'<div class="expl" hidden></div></div>').join("")+'</div><div style="margin-top:18px"><button class="btn primary" type="button" id="pcheck">Check answers</button> <span id="pscore" style="font-weight:700;margin-left:10px"></span></div>';
+  document.getElementById("pcheck").addEventListener("click",()=>{
+    clearInterval(ptimer);let s=0;
+    pbody.querySelectorAll(".qb").forEach(qb=>{const q=p.qs[+qb.dataset.k],sel=qb.querySelector("input:checked"),v=sel?+sel.value:-1;if(v===q.a)s++;
+      qb.querySelectorAll("label").forEach((l,j)=>{l.classList.toggle("right",j===q.a);l.classList.toggle("wrong",j===v&&v!==q.a);});
+      const ex=qb.querySelector(".expl");ex.hidden=false;ex.textContent=q.w;});
+    document.getElementById("pscore").textContent=s+" / "+p.qs.length;
+    const h=LS.get("dmat.hist.txt",[]);h.unshift({t:p.t,s,n:p.qs.length,d:new Date().toISOString()});LS.set("dmat.hist.txt",h.slice(0,12));
+  });
+}
+openP(0);
+window.__dmat={genFig,genEq,genLat,P};
+})();
+</script>
+
+<style>
+@media print{nav,.count,.bar,.hist,.fb,#txt,#fig,#eq,#lat{display:none!important}body{background:#fff;color:#111;font-size:12.5px}.panel{border-color:#ccc;break-inside:avoid}h2{break-after:avoid}.pb{break-before:page}.pq{break-inside:avoid}}
+.pq{margin:10px 0 16px}.pq .opt{cursor:default}
+</style>
+<script>
+(function(){
+if(location.hash!=="#print")return;
+const D=window.__dmat,wrap=document.querySelector(".wrap");
+document.querySelectorAll("section").forEach(s=>{s.hidden=!(s.id==="plan"||s.id==="day");});
+document.getElementById("day").style.marginTop="24px";
+const out=document.createElement("div");wrap.appendChild(out);
+const key=[];
+function block(title,note,gen,levels,prep){
+  let h='<h2 class="pb">'+title+'</h2><p class="muted">'+note+'</p>';out.insertAdjacentHTML("beforeend",h);
+  levels.forEach((l,i)=>{const it=gen(l),d=document.createElement("div");d.className="pq panel";
+    d.insertAdjacentHTML("beforeend",'<div class="lab">'+title+' '+(i+1)+' · '+(l==="med"?"medium":l==="low"?"easy":"hard")+'</div>');
+    const st=document.createElement("div");d.appendChild(st);it.render(st,()=>{});prep(st);out.appendChild(d);
+    key.push('<div class="pq"><div class="lab">'+title+' '+(i+1)+'</div>'+it.explain()+'</div>');});
+}
+block("Equations","Whole numbers 1–20. Solve in your head, then check the key. Timed: 10 in 12:30.",D.genEq,["low","low","med","med","med","med","high","high","high","high"],st=>{const f=st.querySelector("form");if(f){f.querySelectorAll("button").forEach(b=>b.remove());f.querySelectorAll("input").forEach(i=>{i.replaceWith(Object.assign(document.createElement("span"),{textContent:"____"}));});}});
+block("Latin squares","Which letter goes in the ?. Timed: 10 in 12:30.",D.genLat,["low","low","med","med","med","med","high","high","high","high"],st=>{const l=st.querySelector(".letters");if(l)l.remove();});
+block("Figure sequences","Pick Image 5 and Image 6 from Matrix 1–3. Timed: 8 in 10:00.",D.genFig,["low","low","med","med","med","high","high","high"],st=>{st.querySelectorAll(".confirm").forEach(b=>b.parentNode.remove());});
+let t='<h2 class="pb">Subject texts</h2><p class="muted">20 minutes per text. Answers are in the key at the end.</p>';
+D.P.forEach((p,pi)=>{t+='<div class="panel passage'+(pi?' pb':'')+'"><h3 style="margin-top:0">Text '+(pi+1)+': '+p.t+'</h3>'+p.body+p.qs.map((q,k)=>'<div class="pq"><p><b>'+(k+1)+'. '+q.q+'</b></p>'+q.o.map((o,j)=>'<div>'+"abcd"[j]+') '+o+'</div>').join("")+'</div>').join("")+'</div>';
+  key.push('<div class="pq"><div class="lab">Text '+(pi+1)+': '+p.t+'</div><ol class="why">'+p.qs.map(q=>'<li><b>'+"abcd"[q.a]+')</b> '+q.w+'</li>').join("")+'</ol></div>');});
+out.insertAdjacentHTML("beforeend",t+'<h2 class="pb">Answer key</h2>'+key.join(""));
+})();
+</script></body></html>
